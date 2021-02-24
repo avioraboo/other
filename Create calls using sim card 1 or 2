@@ -1,0 +1,25 @@
+// Create a list with information about the sim card (SubscriptionInfo) 
+SubscriptionManager subscriptionManager = (SubscriptionManager) MyApplication.getContext().getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+List<SubscriptionInfo> subscriptionInfos = subscriptionManager.getActiveSubscriptionInfoList();
+
+//Showing the user popup that he can choose which sim card he wants to call with, by using the information about the sim card from "subscriptionInfos"
+
+.......
+
+//After the user selected which card to use, getting the "simSlotIndex"
+SubscriptionInfo subscriptionInfoSelectedByUser = subscriptionInfos.get(subscriptionInfoIndexSelectedByUser);
+int simSlotIndex = subscriptionInfoSelectedByUser.getSimSlotIndex();
+ 
+// Searching for the PhoneAccountHandle that is belog to the "simSelectedByUser" 
+final TelecomManager telecomManager = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
+final List<PhoneAccountHandle> phoneAccountHandles = telecomManager.getCallCapablePhoneAccounts();
+PhoneAccountHandle phoneAccountHandle = phoneAccountHandles.get(simSlotIndex);
+
+//making the call using the "phoneAccountHandle"
+Bundle bundle = new Bundle();
+bundle.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE,  phoneAccountHandle);
+telecomManager.placeCall(Uri.parse("tel:" + Uri.encode(phoneNumber)),bundle);
+
+
+// I have a feeling that the way I'm trying to find the "PhoneAccountHandle" that belong the same "SubscriptionInfo" is wrong.
+// as much as we know this code works on many devices
